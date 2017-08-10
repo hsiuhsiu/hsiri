@@ -2,7 +2,16 @@
 # -*- coding: utf-8 -*-
 
 from telegram.ext import Updater, CommandHandler, Job
+import re
 
+def timeStringToSec(s):
+    p = re.compile('((\d*)h)?((\d*)m)?(\d*)s?')
+    m = p.match(s)
+    hours = 0 if not m.group(2) else int(m.group(2))
+    minutes = 0 if not m.group(4) else int(m.group(4))
+    seconds = 0 if not m.group(5) else int(m.group(5))
+    return 3600 * hours + 60 * minutes + seconds
+    
 
 def timerHandler(bot, update, args, job_queue):
 
@@ -10,7 +19,7 @@ def timerHandler(bot, update, args, job_queue):
         bot.send_message(chat_id=job.context[0], text=job.context[1])
 
     chat_id = update.message.chat_id
-    timerSec = int(args[0])
+    timerSec = timeStringToSec(args[0])
     print("{} set a timer for {} secs".format(chat_id, timerSec))
     message = "[Timer Alarm]"
     if len(args) > 1:
