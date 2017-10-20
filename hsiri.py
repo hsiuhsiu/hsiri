@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from telegram.ext import Updater, CommandHandler, Job
+from datetime import datetime
 import re
 
 def timeStringToSec(s):
@@ -28,6 +29,12 @@ def timerHandler(bot, update, args, job_queue):
     job = Job(callback_alarm, timerSec, repeat=False, context=(chat_id, message))
     job_queue.put(job)
 
+def logHandler(bot, update):
+    msg = datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ' + update.message.text.split(' ', 1)[1]
+    filename = update.message.from_user['username'] + '_log.txt'
+    with open(filename, 'a') as f:
+        f.write(msg)
+
 
 def loadToken(filename='TOKEN'):
     with open(filename) as f:
@@ -43,6 +50,7 @@ if __name__ == '__main__':
                                           timerHandler,
                                           pass_args=True,
                                           pass_job_queue=True))
+    dispatcher.add_handler(CommandHandler('log', logHandler))
         
     updater.start_polling()
     updater.idle()

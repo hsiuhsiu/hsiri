@@ -8,3 +8,9 @@ Put your token in a file named `TOKEN`
 
 ### Timer
 Usage: `/timer [secs] [message]`
+
+### Logger
+Usage: `/log [message]`
+
+The message will be appended to the file `<username>_log.txt` in the following format
+`<Year>-<Month>-<Date> <Hour>:<Mintue>:<Second> <message>`
