@@ -12,11 +12,12 @@ def timeStringToSec(s):
     minutes = 0 if not m.group(4) else int(m.group(4))
     seconds = 0 if not m.group(5) else int(m.group(5))
     return 3600 * hours + 60 * minutes + seconds
-    
+
 
 def timerHandler(bot, update, args, job_queue):
 
     def callback_alarm(bot, job):
+        print('hihihi')
         bot.send_message(chat_id=job.context[0], text=job.context[1])
 
     chat_id = update.message.chat_id
@@ -26,11 +27,10 @@ def timerHandler(bot, update, args, job_queue):
     if len(args) > 1:
         for m in args[1:]:
             message = message + " " + m
-    job = Job(callback_alarm, timerSec, repeat=False, context=(chat_id, message))
-    job_queue.put(job)
+    job_queue.run_once(callback_alarm, timerSec, context=(chat_id, message))
 
 def logHandler(bot, update):
-    msg = datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ' + update.message.text.split(' ', 1)[1]
+    msg = datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ' + update.message.text.split(' ', 1)[1] + '\n'
     filename = update.message.from_user['username'] + '_log.txt'
     with open(filename, 'a') as f:
         f.write(msg)
@@ -51,7 +51,7 @@ if __name__ == '__main__':
                                           pass_args=True,
                                           pass_job_queue=True))
     dispatcher.add_handler(CommandHandler('log', logHandler))
-        
+
     updater.start_polling()
     updater.idle()
 
